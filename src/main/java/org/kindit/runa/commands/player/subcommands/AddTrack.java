@@ -1,0 +1,80 @@
+package org.kindit.runa.commands.player.subcommands;
+
+import java.util.Optional;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.managers.AudioManager;
+import org.kindit.runa.commands.Command;
+import org.kindit.runa.commands.Subcommand;
+import org.kindit.runa.data.JsonUserPlaylistData;
+import org.kindit.runa.lavaplayer.PlayerManager;
+
+public class AddTrack extends Subcommand {
+
+    public AddTrack(String name, String description, Command parentCommand) {
+        super(name, description, parentCommand);
+    }
+
+    @Override
+    public SubcommandData getSubCommandData() {
+        return new SubcommandData(userName, description).addOptions(
+            new OptionData(OptionType.STRING, "url", "YouTube video URL", true),
+            new OptionData(
+                OptionType.STRING,
+                "ephemeral",
+                "Should this message be ephemeral?",
+                false
+            ).addChoice("No", "No")
+        );
+    }
+
+    @Override
+    public void interaction(SlashCommandInteractionEvent event) {
+        boolean ephemeral = !Optional.ofNullable(
+            event.getOption("ephemeral")
+        ).isPresent();
+
+        event.deferReply().setEphemeral(ephemeral).queue();
+        JsonUserPlaylistData playlistData = new JsonUserPlaylistData(
+            event.getMember().getIdLong()
+        );
+
+        String url = event.getOption("url").getAsString();
+        if (playlistData.getUserTracks().get(url) != null) {
+            url = playlistData.getUserTracks().get(url);
+        }
+
+        if (!event.getMember().getVoiceState().inAudioChannel()) {
+            event
+                .getHook()
+                .sendMessageEmbeds(
+                    Command.replyEmbed(
+                        "You need to be in a voice channel for this command work.",
+                        Command.BAD_COLOR
+                    )
+                )
+                .setEphemeral(true)
+                .queue();
+        } else {
+            final AudioManager audioManager = event
+                .getGuild()
+                .getAudioManager();
+            final VoiceChannel memberchannel = (VoiceChannel) event
+                .getMember()
+                .getVoiceState()
+                .getChannel();
+
+            if (!audioManager.isConnected()) {
+                audioManager.openAudioConnection(memberchannel);
+            }
+            PlayerManager.getINSTANCE().loadAndPlay(
+                event.getHook().setEphemeral(ephemeral),
+                event.getChannel().asTextChannel(),
+                url
+            );
+        }
+    }
+}
