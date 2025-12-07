@@ -27,7 +27,6 @@ replay_pid*
 .idea/
 out/
 target/
-data/
 workspace.xml
 *.json
-*.txt
+.project
