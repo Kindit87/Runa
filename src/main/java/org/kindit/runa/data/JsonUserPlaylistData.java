@@ -10,164 +10,163 @@ import org.json.simple.parser.ParseException;
 
 public class JsonUserPlaylistData {
 
-    private final long discordId;
-    private final Map<String, String> userTracks;
-    private final File jsonFile;
-    private boolean operationStatus = false;
+	private final long discordId;
+	private final Map<String, String> userTracks;
+	private final File jsonFile;
+	private boolean operationStatus = false;
 
-    public boolean isSet() {
-        boolean result = operationStatus;
-        operationStatus = false;
-        return result;
-    }
+	public boolean isSet() {
+		boolean result = operationStatus;
+		operationStatus = false;
+		return result;
+	}
 
-    public Map<String, String> getUserTracks() {
-        return userTracks;
-    }
+	public Map<String, String> getUserTracks() {
+		return userTracks;
+	}
 
-    public JsonUserPlaylistData(long discordId) {
-        this.discordId = discordId;
-        jsonFile = new File(
-            new File("").getAbsolutePath() +
-                "\\data\\usersPlaylist\\" +
-                discordId +
-                ".json"
-        );
-        userTracks = getData();
-    }
+	public JsonUserPlaylistData(long discordId) {
+		this.discordId = discordId;
+		jsonFile = new File(
+				new File("").getAbsolutePath() +
+						File.separator + "data" +
+						File.separator + "usersPlaylist" +
+						File.separator + discordId +
+						".json");
+		userTracks = getData();
+	}
 
-    public void addUrl(String name, String url) {
-        userTracks.put(name, url);
+	public void addUrl(String name, String url) {
+		userTracks.put(name, url);
 
-        createJson(userTracks);
+		createJson(userTracks);
 
-        operationStatus = true;
-    }
+		operationStatus = true;
+	}
 
-    public void deleteUrl(String name) {
-        userTracks.remove(name);
+	public void deleteUrl(String name) {
+		userTracks.remove(name);
 
-        createJson(userTracks);
+		createJson(userTracks);
 
-        operationStatus = true;
-    }
+		operationStatus = true;
+	}
 
-    public void editUrl(String name, String url) {
-        url = url.equals("") ? userTracks.get(name) : url;
+	public void editUrl(String name, String url) {
+		url = url.equals("") ? userTracks.get(name) : url;
 
-        userTracks.put(name, url);
+		userTracks.put(name, url);
 
-        createJson(userTracks);
+		createJson(userTracks);
 
-        operationStatus = true;
-    }
+		operationStatus = true;
+	}
 
-    private Map<String, String> getData() {
-        JSONParser parser = new JSONParser();
-        Reader reader = null;
-        if (jsonFile.exists()) {
-            try {
-                reader = new FileReader(jsonFile);
-            } catch (FileNotFoundException e) {
-                System.out.println("User playlist not found :/");
-            }
-        } else {
-            if (createJson()) {
-                try {
-                    reader = new FileReader(jsonFile);
-                } catch (FileNotFoundException e) {
-                    System.out.println("User playlist not found :/");
-                }
-            }
-        }
+	private Map<String, String> getData() {
+		JSONParser parser = new JSONParser();
+		Reader reader = null;
+		if (jsonFile.exists()) {
+			try {
+				reader = new FileReader(jsonFile);
+			} catch (FileNotFoundException e) {
+				System.out.println("User playlist not found :/");
+			}
+		} else {
+			if (createJson()) {
+				try {
+					reader = new FileReader(jsonFile);
+				} catch (FileNotFoundException e) {
+					System.out.println("User playlist not found :/");
+				}
+			}
+		}
 
-        JSONObject jsonObject;
-        try {
-            jsonObject = (JSONObject) parser.parse(reader);
-            assert reader != null;
-            reader.close();
-        } catch (IOException | ParseException e) {
-            throw new RuntimeException(e);
-        }
+		JSONObject jsonObject;
+		try {
+			jsonObject = (JSONObject) parser.parse(reader);
+			assert reader != null;
+			reader.close();
+		} catch (IOException | ParseException e) {
+			throw new RuntimeException(e);
+		}
 
-        JSONArray userTracksJSON = (JSONArray) jsonObject.get("playlist");
+		JSONArray userTracksJSON = (JSONArray) jsonObject.get("playlist");
 
-        Map<String, String> userTracks = new HashMap<>();
-        for (Object obj : userTracksJSON) {
-            JSONObject jsonObj = (JSONObject) obj;
-            userTracks.put(
-                jsonObj.get("name").toString(),
-                jsonObj.get("url").toString()
-            );
-        }
+		Map<String, String> userTracks = new HashMap<>();
+		for (Object obj : userTracksJSON) {
+			JSONObject jsonObj = (JSONObject) obj;
+			userTracks.put(
+					jsonObj.get("name").toString(),
+					jsonObj.get("url").toString());
+		}
 
-        return userTracks;
-    }
+		return userTracks;
+	}
 
-    private boolean createJson() {
-        String path = new File("").getAbsolutePath();
+	private boolean createJson() {
+		String path = new File("").getAbsolutePath();
 
-        File folder = new File(path + "\\data\\usersPlaylist");
-        folder.mkdirs();
+		File folder = new File(path + File.separator + "data" + File.separator + "usersPlaylist");
+		folder.mkdirs();
 
-        File file = new File(folder + "\\" + discordId + ".json");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		File file = new File(folder + File.separator + discordId + ".json");
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
-        JSONObject jsonObject = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
 
-        jsonObject.put("playlist", jsonArray);
+		jsonObject.put("playlist", jsonArray);
 
-        try {
-            FileWriter writer = new FileWriter(jsonFile);
-            writer.write(jsonObject.toJSONString());
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		try {
+			FileWriter writer = new FileWriter(jsonFile);
+			writer.write(jsonObject.toJSONString());
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
-        return jsonFile.exists();
-    }
+		return jsonFile.exists();
+	}
 
-    private boolean createJson(Map<String, String> userTracks) {
-        String path = new File("").getAbsolutePath();
+	private boolean createJson(Map<String, String> userTracks) {
+		String path = new File("").getAbsolutePath();
 
-        File folder = new File(path + "\\data\\usersPlaylist");
-        folder.mkdirs();
+		File folder = new File(path + File.separator + "data" + File.separator + "usersPlaylist");
+		folder.mkdirs();
 
-        File file = new File(folder + "\\" + discordId + ".json");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		File file = new File(folder + File.separator + discordId + ".json");
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
-        JSONArray jsonArray = new JSONArray();
+		JSONArray jsonArray = new JSONArray();
 
-        for (Map.Entry<String, String> entry : userTracks.entrySet()) {
-            JSONObject jsonTrack = new JSONObject();
-            jsonTrack.put("name", entry.getKey());
-            jsonTrack.put("url", entry.getValue());
-            jsonArray.add(jsonTrack);
-        }
+		for (Map.Entry<String, String> entry : userTracks.entrySet()) {
+			JSONObject jsonTrack = new JSONObject();
+			jsonTrack.put("name", entry.getKey());
+			jsonTrack.put("url", entry.getValue());
+			jsonArray.add(jsonTrack);
+		}
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("playlist", jsonArray);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("playlist", jsonArray);
 
-        try {
-            FileWriter writer = new FileWriter(jsonFile);
-            writer.write(jsonObject.toJSONString());
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		try {
+			FileWriter writer = new FileWriter(jsonFile);
+			writer.write(jsonObject.toJSONString());
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
-        return jsonFile.exists();
-    }
+		return jsonFile.exists();
+	}
 }
