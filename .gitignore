@@ -27,7 +27,11 @@ replay_pid*
 .idea/
 out/
 target/
-data/
 workspace.xml
 *.json
-*.txt
+.project
+.classpath
+dependency-reduced-pom.xml
+.settings/
+.zed/
+.github/
