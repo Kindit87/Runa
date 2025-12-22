@@ -30,3 +30,8 @@ target/
 workspace.xml
 *.json
 .project
+.classpath
+dependency-reduced-pom.xml
+.settings/
+.zed/
+.github/
