@@ -8,7 +8,7 @@
 
     <groupId>org.kindit</groupId>
     <artifactId>Runa</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -30,7 +30,9 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"
+                                >
                                     <mainClass>org.kindit.runa.Runa</mainClass>
                                 </transformer>
                             </transformers>
@@ -43,9 +45,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.DV8FromTheWorld</groupId>
+            <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>v6.1.2</version>
+            <version>6.3.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>club.minnced</groupId>
@@ -56,17 +58,17 @@
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>v2</artifactId>
-            <version>1.16.0</version>
+            <version>1.18.0</version>
         </dependency>
         <dependency>
             <groupId>dev.arbjerg</groupId>
             <artifactId>lavaplayer</artifactId>
-            <version>2.2.4</version>
+            <version>2.2.6</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20220924</version>
+            <version>20251224</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -76,23 +78,39 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.8</version>
+            <version>1.5.32</version>
         </dependency>
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>4.13.0</version>
+            <groupId>club.minnced</groupId>
+            <artifactId>jdave-api</artifactId>
+            <version>0.1.7</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>jdave-native-linux-x86-64</artifactId>
+            <version>0.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>jdave-native-linux-aarch64</artifactId>
+            <version>0.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>jdave-native-win-x86-64</artifactId>
+            <version>0.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>jdave-native-darwin</artifactId>
+            <version>0.1.7</version>
         </dependency>
     </dependencies>
 
     <repositories>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
             <id>dv8tion</id>
-            <name>m2-dv8tion</name>
             <url>https://m2.dv8tion.net/releases</url>
         </repository>
         <repository>
