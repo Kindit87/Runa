@@ -1,9 +1,11 @@
 package org.kindit.runa;
 
+import club.minnced.discord.jdave.interop.JDaveSessionFactory;
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.TimeUnit;
 import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.audio.AudioModuleConfig;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
@@ -34,6 +36,11 @@ public class Runa {
             GatewayIntent.GUILD_MEMBERS
         );
         builder.enableCache(CacheFlag.VOICE_STATE);
+        builder.setAudioModuleConfig(
+            new AudioModuleConfig().withDaveSessionFactory(
+                new JDaveSessionFactory()
+            )
+        );
         shardManager = builder.build();
 
         // Register listeners
